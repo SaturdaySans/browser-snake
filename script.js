@@ -1,8 +1,8 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const gridSize = 16;
-const lightGreen = "#AAD751";
-const darkGreen = "#A2D149";
+const lightColor = "#AAD751";
+const darkColor = "#A2D149";
 
 function resizeCanvas() {
   const size = Math.min(window.innerWidth, window.innerHeight);
