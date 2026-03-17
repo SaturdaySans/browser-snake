@@ -1,23 +1,24 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
-
 const gridSize = 16;
-const tileSize = canvas.width / gridSize;
+
+function resizeCanvas() {
+  const size = Math.min(window.innerWidth, window.innerHeight) * 0.9;
+
+  canvas.width = size;
+  canvas.height = size;
+
+  drawCheckerboard();
+}
 
 const lightColor = "#AAD751";
 const darkColor = "#A2D149";
 
 function drawCheckerboard() {
+  const tileSize = canvas.width / gridSize;
   for (let row = 0; row < gridSize; row++) {
     for (let col = 0; col < gridSize; col++) {
-
-      if ((row + col) % 2 === 0) {
-        ctx.fillStyle = lightColor;
-      } 
-      else {
-        ctx.fillStyle = darkColor;
-      }
-
+      ctx.fillStyle = (row + col) % 2 === 0 ? lightColor : darkColor;
       ctx.fillRect(
         col * tileSize,
         row * tileSize,
@@ -27,5 +28,5 @@ function drawCheckerboard() {
     }
   }
 }
-
-drawCheckerboard();
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
