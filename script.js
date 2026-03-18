@@ -6,10 +6,13 @@ const darkColor = "#A2D149";
 const appleImg = new Image();
 appleImg.src = "assets/apple.png";
 // variables
-let apple = { x: 0, y: 0 };
+let apples = [];
+const numApples = 3;
 let snake = [{ x: 8, y: 8 }];
 let dirx = 1; //direciton
 let diry = 0; //differentiation wow
+let score = 0;
+let speed = 200;
 
 document.addEventListener("keydown", changeDirection);
 document.addEventListener("keydown", (e) => {
@@ -20,17 +23,17 @@ document.addEventListener("keydown", (e) => {
 function changeDirection(event) {
   const key = event.key;
   if ((key === "ArrowUp" || key === "w") && diry !== 1) {
-    dirx = 0;
-    diry = -1;
+    dirx=0;
+    diry=-1;
   } if ((key === "ArrowDown" || key === "s") && diry !== -1) {
-    dirx = 0;
-    diry = 1;
+    dirx=0;
+    diry=1;
   } if ((key === "ArrowLeft" || key === "a") && dirx !== 1) {
-    dirx = -1;
-    diry = 0;
+    dirx=-1;
+    diry=0;
   } if ((key === "ArrowRight" || key === "d") && dirx !== -1) {
-    dirx = 1;
-    diry = 0;
+    dirx=1;
+    diry=0;
   }
 }
 
@@ -38,7 +41,7 @@ function changeDirection(event) {
 function resizeCanvas() {
   const size = Math.min(window.innerWidth, window.innerHeight);
 
-  canvas.width = size;
+  canvas.width =size;
   canvas.height = size;
 
   draw();
@@ -62,20 +65,38 @@ function drawCheckerboard() {
 function randomPos() {
   return Math.floor(Math.random() * gridSize);
 }
-// implement count (never happening)
-function generateApple(count) {
-  apple.x = randomPos();
-  apple.y = randomPos();
-  // no overlap
-  while (snake.some(segment => segment.x === apple.x && segment.y === apple.y)) {
-    apple.x = randomPos();
-    apple.y = randomPos();
+//implement count()
+function spawnApple() { //solo
+  let valid = false;
+  let newApple;
+  while (!valid) {
+    newApple = { x: randomPos(), y: randomPos() };
+    valid = !snake.some(s => s.x === newApple.x && s.y === newApple.y) &&
+            !apples.some(a => a.x === newApple.x && a.y === newApple.y);
   }
+  apples.push(newApple);
+}
+function initApples() { //start
+  apples = [];
+  for (let i = 0; i < numApples; i++) {
+    spawnApple();}
 }
 
+/*function generateApple(count) { //overtime work
+  let valid = false;
+  while (!valid) 
+  {
+    apple.x = randomPos();
+    apple.y = randomPos();
+    valid = !snake.some(s => s.x === apple.x && s.y === apple.y);
+  }
+}*/
+
 function drawApple() {
-  const tilesize = canvas.width / gridSize;
-  ctx.drawImage(appleImg, apple.x * tilesize, apple.y * tilesize,tilesize , tilesize);
+  const tileSize = canvas.width / gridSize;
+  apples.forEach(apple => {
+    ctx.drawImage(appleImg, apple.x * tileSize, apple.y * tileSize, tileSize, tileSize);
+  });
 }
 
 //snake
@@ -94,33 +115,37 @@ function draw() {
   drawCheckerboard();
   drawApple();
   drawSnake();
-}
+} //refreshs the canvas
 
 function update() {
   const head = { x: snake[0].x + dirx, y: snake[0].y + diry };
   if (head.x < 0 || head.x >= gridSize || head.y < 0 || head.y >= gridSize || snake.slice(1).some(segment => segment.x === head.x && segment.y === head.y)) 
-  {
-    alert("Game Over!");
-    snake = [{ x: 8, y: 8 }];
-    dirx = 1;
-    diry = 0;
-    generateApple();
+  { //scenario for cleanup reset
+    alert("Game Over");
+    snake=[{x:8,y:8}];
+    dirx=1;
+    diry=0;
+    score = 0;
+    initApples(); //
     return;
   }
-
   snake.unshift(head);
-
-  if (head.x === apple.x && head.y === apple.y) {
-    generateApple();
-  } else {
-    snake.pop();
-  }
-
+  const eatenIndex = apples.findIndex(a => a.x ===head.x&& a.y ===head.y);
+  if (eatenIndex!== -1) {
+    score++;
+    apples.splice(eatenIndex, 1);
+    spawnApple();
+  } 
+  else {snake.pop();}
   draw();
 }
 
+function gameloop() {
+  update();
+  setTimeout(gameloop, speed);
+}
 
 window.addEventListener("resize", resizeCanvas);
-generateApple();
+initApples();
 resizeCanvas();
-setInterval(update, 200);
+gameloop();
