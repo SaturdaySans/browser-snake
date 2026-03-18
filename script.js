@@ -11,6 +11,31 @@ let snake = [{ x: 8, y: 8 }];
 let dirx = 1; //direciton
 let diry = 0; //differentiation wow
 
+document.addEventListener("keydown", (e) => {
+  if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+    e.preventDefault();
+  }
+});
+function changeDirection(event) {
+  const key = event.key;
+  if (key === "ArrowUp" && diry !== 1) {
+    dirx = 0;
+    diry = -1;
+  }
+  if (key === "ArrowDown" && diry !== -1) {
+    dirx = 0;
+    diry = 1;
+  }
+  if (key === "ArrowLeft" && dirx !== 1) {
+    dirx = -1;
+    diry = 0;
+  }
+  if (key === "ArrowRight" && dirx !== -1) {
+    dirx = 1;
+    diry = 0;
+  }
+}
+
 // grid drawing
 function resizeCanvas() {
   const size = Math.min(window.innerWidth, window.innerHeight);
@@ -39,15 +64,15 @@ function drawCheckerboard() {
 function randomPos() {
   return Math.floor(Math.random() * gridSize);
 }
-
+// implement count (never happening)
 function generateApple(count) {
   apple.x = randomPos();
   apple.y = randomPos();
   // no overlap
-  /*while (snake.some(segment => segment.x === apple.x && segment.y === apple.y)) {
+  while (snake.some(segment => segment.x === apple.x && segment.y === apple.y)) {
     apple.x = randomPos();
     apple.y = randomPos();
-  }*/
+  }
 }
 
 function drawApple() {
@@ -75,8 +100,24 @@ function draw() {
 
 function update() {
   const head = { x: snake[0].x + dirx, y: snake[0].y + diry };
+  if (head.x < 0 || head.x >= gridSize || head.y < 0 || head.y >= gridSize || snake.slice(1).some(segment => segment.x === head.x && segment.y === head.y)) 
+  {
+    alert("Game Over!");
+    snake = [{ x: 8, y: 8 }];
+    dirx = 1;
+    diry = 0;
+    generateApple();
+    return;
+  }
+
   snake.unshift(head);
-  snake.pop();
+
+  if (head.x === apple.x && head.y === apple.y) {
+    generateApple();
+  } else {
+    snake.pop();
+  }
+
   draw();
 }
 
