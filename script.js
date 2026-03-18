@@ -11,6 +11,7 @@ let snake = [{ x: 8, y: 8 }];
 let dirx = 1; //direciton
 let diry = 0; //differentiation wow
 
+document.addEventListener("keydown", changeDirection);
 document.addEventListener("keydown", (e) => {
   if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
     e.preventDefault();
@@ -18,19 +19,16 @@ document.addEventListener("keydown", (e) => {
 });
 function changeDirection(event) {
   const key = event.key;
-  if (key === "ArrowUp" && diry !== 1) {
+  if ((key === "ArrowUp" || key === "w") && diry !== 1) {
     dirx = 0;
     diry = -1;
-  }
-  if (key === "ArrowDown" && diry !== -1) {
+  } if ((key === "ArrowDown" || key === "s") && diry !== -1) {
     dirx = 0;
     diry = 1;
-  }
-  if (key === "ArrowLeft" && dirx !== 1) {
+  } if ((key === "ArrowLeft" || key === "a") && dirx !== 1) {
     dirx = -1;
     diry = 0;
-  }
-  if (key === "ArrowRight" && dirx !== -1) {
+  } if ((key === "ArrowRight" || key === "d") && dirx !== -1) {
     dirx = 1;
     diry = 0;
   }
