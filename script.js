@@ -1,8 +1,8 @@
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 const gridSize = 16; // 16 by 16 gridddy
-const lightColor = "#AAD751";
-const darkColor = "#A2D149";
+const lightColor = "black";
+const darkColor = "black"; //future styling (checkerbobard alternae)
 const appleImg = new Image();
 appleImg.src = "assets/apple.png";
 // variables
@@ -43,20 +43,18 @@ function resizeCanvas() {
 
   canvas.width =size;
   canvas.height = size;
-
   draw();
 }
 function drawCheckerboard() {
   const tileSize = canvas.width / gridSize;
   for (let row = 0; row < gridSize; row++) {
     for (let col = 0; col < gridSize; col++) {
-      ctx.fillStyle = (row + col) % 2 === 0 ? lightColor : darkColor;
+      ctx.fillStyle = (row + col) % 2 === 0 ? lightColor : darkColor;  
       ctx.fillRect(
         col * tileSize,
         row * tileSize,
         tileSize,
-        tileSize
-      );
+        tileSize);
     }
   }
 }
@@ -66,7 +64,7 @@ function randomPos() {
   return Math.floor(Math.random() * gridSize);
 }
 //implement count()
-function spawnApple() { //solo
+function spawnApple() { //one
   let valid = false;
   let newApple;
   while (!valid) {
@@ -78,7 +76,7 @@ function spawnApple() { //solo
 }
 function initApples() { //start
   apples = [];
-  for (let i = 0; i < numApples; i++) {
+  for (let i = 0;i<numApples;i++) {
     spawnApple();}
 }
 
@@ -93,19 +91,24 @@ function initApples() { //start
 }*/
 
 function drawApple() {
-  const tileSize = canvas.width / gridSize;
+  const tileSize = canvas.width/gridSize;
   apples.forEach(apple => {
-    ctx.drawImage(appleImg, apple.x * tileSize, apple.y * tileSize, tileSize, tileSize);
+    ctx.drawImage(appleImg, apple.x * tileSize, apple.y * tileSize, tileSize, tileSize); //apply sizing
   });
 }
 
 //snake
 function drawSnake() {
-  const tileSize = canvas.width / gridSize;
-  ctx.fillStyle = "green";
-  snake.forEach(segment => {
-    ctx.fillRect(segment.x * tileSize, segment.y * tileSize, tileSize, tileSize);
+  const tileSize = canvas.width/ gridSize;
+  snake.forEach((segment,index) => {
+    ctx.fillStyle = index === 0 ? "green" : "green"; //differentiate
+    ctx.fillRect(segment.x*tileSize, segment.y*tileSize, tileSize, tileSize);
   });
+
+  // ctx.fillStyle = "green";
+  // snake.forEach(segment => {
+  //   ctx.fillRect(segment.x * tileSize, segment.y * tileSize, tileSize, tileSize);
+  // });
 }
 
 
@@ -135,7 +138,7 @@ function update() {
     score++;
     apples.splice(eatenIndex, 1);
     spawnApple();
-  } 
+  } // pop only
   else {snake.pop();}
   draw();
 }
